@@ -1,0 +1,130 @@
+// Problem: Unique Paths
+// Platform: LeetCode 62
+//
+// Approaches:
+// 1. Recursion
+// 2. Memoization
+// 3. Tabulation
+// 4. Space Optimized DP
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+    //////////////////////////////////////////////////////
+    // 1️⃣ Recursion
+    //////////////////////////////////////////////////////
+    int recursion(int i,int j){
+
+        if(i==0 && j==0) return 1;
+        if(i<0 || j<0) return 0;
+
+        int up = recursion(i-1,j);
+        int left = recursion(i,j-1);
+
+        return up + left;
+    }
+
+    //////////////////////////////////////////////////////
+    // 2️⃣ Memoization
+    //////////////////////////////////////////////////////
+    int memo(int i,int j,vector<vector<int>>&dp){
+
+        if(i==0 && j==0) return 1;
+        if(i<0 || j<0) return 0;
+
+        if(dp[i][j]!=-1) return dp[i][j];
+
+        int up = memo(i-1,j,dp);
+        int left = memo(i,j-1,dp);
+
+        return dp[i][j] = up + left;
+    }
+
+    //////////////////////////////////////////////////////
+    // 3️⃣ Tabulation
+    //////////////////////////////////////////////////////
+    int tabulation(int m,int n){
+
+        vector<vector<int>>dp(m,vector<int>(n,0));
+
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+
+                if(i==0 && j==0){
+                    dp[i][j]=1;
+                    continue;
+                }
+
+                int up=0,left=0;
+
+                if(i>0) up=dp[i-1][j];
+                if(j>0) left=dp[i][j-1];
+
+                dp[i][j]=up+left;
+            }
+        }
+
+        return dp[m-1][n-1];
+    }
+
+    //////////////////////////////////////////////////////
+    // 4️⃣ Space Optimized
+    //////////////////////////////////////////////////////
+    int spaceOptimized(int m,int n){
+
+        vector<int>prev(n,0);
+
+        for(int i=0;i<m;i++){
+
+            vector<int>temp(n,0);
+
+            for(int j=0;j<n;j++){
+
+                if(i==0 && j==0){
+                    temp[j]=1;
+                    continue;
+                }
+
+                int up=0,left=0;
+
+                if(i>0) up=prev[j];
+                if(j>0) left=temp[j-1];
+
+                temp[j]=up+left;
+            }
+
+            prev=temp;
+        }
+
+        return prev[n-1];
+    }
+};
+
+//////////////////////////////////////////////////////////
+// Driver Code
+//////////////////////////////////////////////////////////
+int main(){
+
+    int m = 3;
+    int n = 7;
+
+    Solution sol;
+
+    cout<<"Recursion: "
+        <<sol.recursion(m-1,n-1)<<endl;
+
+    vector<vector<int>>dp(m,vector<int>(n,-1));
+    cout<<"Memoization: "
+        <<sol.memo(m-1,n-1,dp)<<endl;
+
+    cout<<"Tabulation: "
+        <<sol.tabulation(m,n)<<endl;
+
+    cout<<"Space Optimized: "
+        <<sol.spaceOptimized(m,n)<<endl;
+
+    return 0;
+}
