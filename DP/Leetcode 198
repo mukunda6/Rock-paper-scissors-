@@ -1,0 +1,133 @@
+// Problem: House Robber / Maximum Non Adjacent Sum
+// Platform: LeetCode 198
+//
+// Approaches:
+// 1. Pure Recursion
+// 2. Recursion + Memoization
+// 3. Tabulation
+// 4. Space Optimized DP
+//
+// Time Complexity:
+// Recursion      : O(2^n)
+// Memoization    : O(n)
+// Tabulation     : O(n)
+// Space Optimized: O(n)
+//
+// Space Complexity:
+// Recursion      : O(n)
+// Memoization    : O(n)
+// Tabulation     : O(n)
+// Space Optimized: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+    //////////////////////////////////////////////////////
+    // 🔴 Approach 1: Pure Recursion
+    //////////////////////////////////////////////////////
+    int recursion(vector<int>& nums, int idx) {
+
+        if (idx == 0) return nums[0];
+        if (idx < 0) return 0;
+
+        int pick = nums[idx] + recursion(nums, idx - 2);
+        int notPick = recursion(nums, idx - 1);
+
+        return max(pick, notPick);
+    }
+
+    //////////////////////////////////////////////////////
+    // 🟡 Approach 2: Memoization (Top Down DP)
+    //////////////////////////////////////////////////////
+    int memoSolve(vector<int>& nums, int idx, vector<int>& dp) {
+
+        if (idx == 0) return nums[0];
+        if (idx < 0) return 0;
+
+        if (dp[idx] != -1) return dp[idx];
+
+        int pick = nums[idx] + memoSolve(nums, idx - 2, dp);
+        int notPick = memoSolve(nums, idx - 1, dp);
+
+        return dp[idx] = max(pick, notPick);
+    }
+
+    int memoization(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n, -1);
+        return memoSolve(nums, n - 1, dp);
+    }
+
+    //////////////////////////////////////////////////////
+    // 🟢 Approach 3: Tabulation (Bottom Up DP)
+    //////////////////////////////////////////////////////
+    int tabulation(vector<int>& nums) {
+
+        int n = nums.size();
+        vector<int> dp(n);
+
+        dp[0] = nums[0];
+
+        for (int i = 1; i < n; i++) {
+
+            int pick = nums[i];
+            if (i > 1)
+                pick += dp[i - 2];
+
+            int notPick = dp[i - 1];
+
+            dp[i] = max(pick, notPick);
+        }
+
+        return dp[n - 1];
+    }
+
+    //////////////////////////////////////////////////////
+    // 🔥 Approach 4: Space Optimized DP (BEST)
+    //////////////////////////////////////////////////////
+    int spaceOptimized(vector<int>& nums) {
+
+        int prev2 = 0;
+        int prev = nums[0];
+
+        for (int i = 1; i < nums.size(); i++) {
+
+            int pick = nums[i] + prev2;
+            int notPick = prev;
+
+            int curr = max(pick, notPick);
+
+            prev2 = prev;
+            prev = curr;
+        }
+
+        return prev;
+    }
+};
+
+/////////////////////////////////////////////////////////////
+// 🔥 Driver Code
+/////////////////////////////////////////////////////////////
+int main() {
+
+    vector<int> nums = {2,1,4,9};
+
+    Solution sol;
+
+    cout << "Recursion: "
+         << sol.recursion(nums, nums.size() - 1) << endl;
+
+    cout << "Memoization: "
+         << sol.memoization(nums) << endl;
+
+    cout << "Tabulation: "
+         << sol.tabulation(nums) << endl;
+
+    cout << "Space Optimized: "
+         << sol.spaceOptimized(nums) << endl;
+
+    return 0;
+}
