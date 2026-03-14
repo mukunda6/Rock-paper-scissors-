@@ -1,0 +1,67 @@
+# Minimum Falling Path Sum
+
+Platform: LeetCode 931  
+Category: Dynamic Programming (Grid DP)
+
+## Problem
+
+Given an n x n matrix of integers, return the minimum sum of any falling path through the matrix.
+
+You can move from cell (i,j) to:
+
+- (i+1, j)   → Down
+- (i+1, j-1) → Left Diagonal
+- (i+1, j+1) → Right Diagonal
+
+---
+
+## Approaches
+
+### 1. Recursion
+
+Time Complexity: O(3^n)  
+Reason: From each cell we explore 3 directions.
+
+Space Complexity: O(n)  
+Reason: Recursion stack depth equals number of rows.
+
+---
+
+### 2. Memoization (Top Down DP)
+
+Time Complexity: O(n²)
+
+Reason: Each state (i,j) computed once.
+
+Space Complexity: O(n²) + O(n)
+
+n² → DP table  
+n → recursion stack
+
+---
+
+### 3. Tabulation (Bottom Up)
+
+Time Complexity: O(n²)
+
+Space Complexity: O(n²)
+
+We fill the DP table row by row.
+
+---
+
+### 4. Space Optimized DP
+
+Time Complexity: O(n²)
+
+Space Complexity: O(n)
+
+Only previous row is stored.
+
+---
+
+## Concepts Used
+
+Grid DP  
+State Transition  
+Space Optimization
