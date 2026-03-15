@@ -1,0 +1,243 @@
+// Problem: Minimum Subset Sum Difference
+// Pattern: DP on Subsequences
+//
+// Approaches:
+// 1. Recursion
+// 2. Memoization
+// 3. Tabulation
+// 4. Space Optimized
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution{
+public:
+
+/////////////////////////////////////////////////////////
+// 1️⃣ Recursion
+// Time Complexity: O(2^n)
+// Space Complexity: O(n)
+/////////////////////////////////////////////////////////
+
+bool recursion(int idx,int target,vector<int>&arr){
+
+    if(target==0) return true;
+
+    if(idx==0) return arr[0]==target;
+
+    bool nottake = recursion(idx-1,target,arr);
+
+    bool take = false;
+
+    if(arr[idx]<=target)
+        take = recursion(idx-1,target-arr[idx],arr);
+
+    return take || nottake;
+}
+
+int minSubsetSumDifferenceRec(vector<int>&arr){
+
+    int n = arr.size();
+
+    int totSum = 0;
+
+    for(int x:arr) totSum += x;
+
+    int mini = 1e9;
+
+    for(int s=0;s<=totSum;s++){
+
+        if(recursion(n-1,s,arr)){
+
+            int diff = abs(s - (totSum-s));
+
+            mini = min(mini,diff);
+        }
+    }
+
+    return mini;
+}
+
+/////////////////////////////////////////////////////////
+// 2️⃣ Memoization
+// Time Complexity: O(n * totalSum)
+// Space Complexity: O(n * totalSum)
+/////////////////////////////////////////////////////////
+
+bool memo(int idx,int target,
+          vector<int>&arr,
+          vector<vector<int>>&dp){
+
+    if(target==0) return true;
+
+    if(idx==0) return arr[0]==target;
+
+    if(dp[idx][target]!=-1)
+        return dp[idx][target];
+
+    bool nottake = memo(idx-1,target,arr,dp);
+
+    bool take=false;
+
+    if(arr[idx]<=target)
+        take = memo(idx-1,target-arr[idx],arr,dp);
+
+    return dp[idx][target] = take || nottake;
+}
+
+int minSubsetSumDifferenceMemo(vector<int>&arr){
+
+    int n = arr.size();
+
+    int totSum = 0;
+
+    for(int x:arr) totSum += x;
+
+    vector<vector<int>> dp(n,vector<int>(totSum+1,-1));
+
+    int mini = 1e9;
+
+    for(int s=0;s<=totSum;s++){
+
+        if(memo(n-1,s,arr,dp)){
+
+            int diff = abs(s-(totSum-s));
+
+            mini = min(mini,diff);
+        }
+    }
+
+    return mini;
+}
+
+/////////////////////////////////////////////////////////
+// 3️⃣ Tabulation
+// Time Complexity: O(n * totalSum)
+// Space Complexity: O(n * totalSum)
+/////////////////////////////////////////////////////////
+
+int tabulation(vector<int>&arr){
+
+    int n = arr.size();
+
+    int totSum = 0;
+
+    for(int x:arr) totSum += x;
+
+    vector<vector<bool>> dp(n,
+        vector<bool>(totSum+1,false));
+
+    for(int i=0;i<n;i++)
+        dp[i][0]=true;
+
+    if(arr[0]<=totSum)
+        dp[0][arr[0]] = true;
+
+    for(int i=1;i<n;i++){
+
+        for(int t=1;t<=totSum;t++){
+
+            bool nottake = dp[i-1][t];
+
+            bool take = false;
+
+            if(arr[i]<=t)
+                take = dp[i-1][t-arr[i]];
+
+            dp[i][t] = take || nottake;
+        }
+    }
+
+    int mini = 1e9;
+
+    for(int s=0;s<=totSum;s++){
+
+        if(dp[n-1][s]){
+
+            int diff = abs(s-(totSum-s));
+
+            mini = min(mini,diff);
+        }
+    }
+
+    return mini;
+}
+
+/////////////////////////////////////////////////////////
+// 4️⃣ Space Optimized
+// Time Complexity: O(n * totalSum)
+// Space Complexity: O(totalSum)
+/////////////////////////////////////////////////////////
+
+int spaceOptimized(vector<int>&arr){
+
+    int n = arr.size();
+
+    int totSum = 0;
+
+    for(int x:arr) totSum += x;
+
+    vector<bool> prev(totSum+1,false);
+
+    prev[0] = true;
+
+    if(arr[0]<=totSum)
+        prev[arr[0]] = true;
+
+    for(int i=1;i<n;i++){
+
+        vector<bool> curr(totSum+1,false);
+
+        curr[0] = true;
+
+        for(int t=1;t<=totSum;t++){
+
+            bool nottake = prev[t];
+
+            bool take=false;
+
+            if(arr[i]<=t)
+                take = prev[t-arr[i]];
+
+            curr[t] = take || nottake;
+        }
+
+        prev = curr;
+    }
+
+    int mini = 1e9;
+
+    for(int s=0;s<=totSum;s++){
+
+        if(prev[s]){
+
+            int diff = abs(s-(totSum-s));
+
+            mini = min(mini,diff);
+        }
+    }
+
+    return mini;
+}
+
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> arr = {1,2,3,4};
+
+    Solution sol;
+
+    cout<<"Recursion: "<<sol.minSubsetSumDifferenceRec(arr)<<endl;
+
+    cout<<"Memoization: "<<sol.minSubsetSumDifferenceMemo(arr)<<endl;
+
+    cout<<"Tabulation: "<<sol.tabulation(arr)<<endl;
+
+    cout<<"Space Optimized: "<<sol.spaceOptimized(arr)<<endl;
+
+}
