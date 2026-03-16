@@ -1,0 +1,66 @@
+// Problem: Jump Game
+// Platform: LeetCode 55
+// Pattern: Greedy Algorithm
+//
+// Problem Statement:
+// You are given an array nums where each element represents
+// the maximum jump length at that position.
+// Return true if you can reach the last index.
+//
+// Greedy Idea:
+// Track the farthest index reachable so far.
+// If the current index exceeds the farthest reachable index,
+// then it is impossible to proceed.
+//
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+/////////////////////////////////////////////////////////
+// Greedy Solution
+/////////////////////////////////////////////////////////
+
+class Solution {
+public:
+
+    bool canJump(vector<int>& nums) {
+
+        int maxReach = 0;
+
+        for(int i = 0; i < nums.size(); i++){
+
+            if(i > maxReach)
+                return false;
+
+            maxReach = max(maxReach, i + nums[i]);
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> nums = {2,3,1,1,4};
+
+    cout<<"Array: ";
+    for(int x : nums) cout<<x<<" ";
+    cout<<endl;
+
+    Solution sol;
+
+    bool ans = sol.canJump(nums);
+
+    if(ans)
+        cout<<"You can reach the last index."<<endl;
+    else
+        cout<<"You cannot reach the last index."<<endl;
+
+    return 0;
+}
