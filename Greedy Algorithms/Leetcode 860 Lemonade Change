@@ -1,0 +1,96 @@
+// Problem: Lemonade Change
+// Platform: LeetCode 860
+// Pattern: Greedy Algorithm
+//
+// Problem Statement:
+// Each lemonade costs $5.
+// Customers pay with $5, $10, or $20 bills.
+// Initially, you have no change.
+// Return true if you can provide correct change to every customer.
+//
+// Greedy Idea:
+// Always try to give change using the largest bill first.
+// Prefer using one $10 + one $5 instead of three $5 bills.
+//
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+/////////////////////////////////////////////////////////
+// Class that handles the Lemonade Change problem
+/////////////////////////////////////////////////////////
+
+class LemonadeStand {
+public:
+
+    bool lemonadeChange(vector<int>& bills) {
+
+        int five = 0;
+        int ten = 0;
+
+        for(int bill : bills){
+
+            if(bill == 5){
+                five++;
+            }
+
+            else if(bill == 10){
+
+                if(five > 0){
+                    five--;
+                    ten++;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            else{ // bill == 20
+
+                if(ten > 0 && five > 0){
+                    ten--;
+                    five--;
+                }
+
+                else if(five >= 3){
+                    five -= 3;
+                }
+
+                else{
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> bills = {5,5,5,10,20};
+
+    cout<<"Queue of customers: ";
+
+    for(int x : bills)
+        cout<<x<<" ";
+
+    cout<<endl;
+
+    LemonadeStand stand;
+
+    bool ans = stand.lemonadeChange(bills);
+
+    if(ans)
+        cout<<"It is possible to provide change for all customers."<<endl;
+    else
+        cout<<"It is not possible to provide change for all customers."<<endl;
+
+    return 0;
+}
