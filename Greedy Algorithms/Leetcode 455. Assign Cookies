@@ -1,0 +1,60 @@
+// Problem: Assign Cookies
+// Platform: LeetCode 455
+// Pattern: Greedy Algorithm
+//
+// Idea:
+// Give the smallest cookie that satisfies the smallest greed factor.
+// Sort both arrays and use two pointers.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+/////////////////////////////////////////////////////////
+// Greedy Approach
+// Time Complexity: O(n log n + m log m)
+// Space Complexity: O(1)
+/////////////////////////////////////////////////////////
+
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+
+        int m = g.size();
+        int n = s.size();
+
+        int l = 0, r = 0;
+
+        // Sort greed factors and cookies
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+
+        while(l < n && r < m){
+
+            if(g[r] <= s[l]){
+                r++;
+            }
+
+            l++;
+        }
+
+        return r;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> greed = {1,2,3};
+    vector<int> cookies = {1,1};
+
+    Solution sol;
+
+    cout<<"Content Children: "
+        <<sol.findContentChildren(greed,cookies)<<endl;
+
+    return 0;
+}
