@@ -1,0 +1,66 @@
+// Problem: Shortest Job First (SJF) Scheduling
+// Pattern: Greedy Algorithm
+//
+// Problem Statement:
+// Given an array of job execution times, schedule the jobs
+// such that the average waiting time is minimized.
+//
+// Greedy Idea:
+// Execute the shortest job first to reduce total waiting time.
+//
+// Time Complexity: O(n log n)  (due to sorting)
+// Space Complexity: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+/////////////////////////////////////////////////////////
+// Class implementing Shortest Job First Scheduling
+/////////////////////////////////////////////////////////
+
+class ShortestJobFirst {
+public:
+
+    // Function to calculate average waiting time
+    float calculateAverageWaitTime(vector<int>& jobs) {
+
+        // Sort jobs by duration
+        sort(jobs.begin(), jobs.end());
+
+        float waitTime = 0;
+        int totalTime = 0;
+        int n = jobs.size();
+
+        for(int i = 0; i < n; i++){
+
+            waitTime += totalTime;
+            totalTime += jobs[i];
+        }
+
+        return waitTime / n;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> jobs = {4,3,7,1,2};
+
+    cout<<"Array Representing Job Durations: ";
+
+    for(int job : jobs)
+        cout<<job<<" ";
+
+    cout<<endl;
+
+    ShortestJobFirst sjf;
+
+    float ans = sjf.calculateAverageWaitTime(jobs);
+
+    cout<<"Average waiting time: "<<ans<<endl;
+
+    return 0;
+}
