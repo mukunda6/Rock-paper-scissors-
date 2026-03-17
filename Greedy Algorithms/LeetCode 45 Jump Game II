@@ -1,0 +1,125 @@
+// Problem: Jump Game II
+// Platform: LeetCode 45
+// Pattern: Greedy + DP
+//
+// Problem Statement:
+// Given an array nums where each element represents the maximum jump length,
+// return the minimum number of jumps required to reach the last index.
+//
+// Approaches:
+// 1. Recursion
+// 2. Memoization
+// 3. Greedy (Optimal)
+//
+// Time Complexities:
+// Recursion: O(n^n)
+// Memoization: O(n^2)
+// Greedy: O(n)
+//
+// Space Complexity:
+// Recursion: O(n)
+// Memoization: O(n)
+// Greedy: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+/////////////////////////////////////////////////////////
+// 1️⃣ Recursion
+/////////////////////////////////////////////////////////
+
+    int recursion(vector<int>& nums, int idx){
+
+        int n = nums.size();
+
+        if(idx >= n-1) return 0;
+
+        int mini = INT_MAX;
+
+        for(int jump = 1; jump <= nums[idx]; jump++){
+
+            int step = recursion(nums, idx + jump);
+
+            if(step != INT_MAX)
+                mini = min(mini, step + 1);
+        }
+
+        return mini;
+    }
+
+/////////////////////////////////////////////////////////
+// 2️⃣ Memoization
+/////////////////////////////////////////////////////////
+
+    int memo(vector<int>& nums, int idx, vector<int>& dp){
+
+        int n = nums.size();
+
+        if(idx >= n-1) return 0;
+
+        if(dp[idx] != -1) return dp[idx];
+
+        int mini = INT_MAX;
+
+        for(int jump = 1; jump <= nums[idx]; jump++){
+
+            int step = memo(nums, idx + jump, dp);
+
+            if(step != INT_MAX)
+                mini = min(mini, step + 1);
+        }
+
+        return dp[idx] = mini;
+    }
+
+/////////////////////////////////////////////////////////
+// 3️⃣ Greedy (Optimal)
+// Time: O(n), Space: O(1)
+/////////////////////////////////////////////////////////
+
+    int greedy(vector<int>& nums){
+
+        int jumps = 0;
+        int currentEnd = 0;
+        int farthest = 0;
+
+        for(int i = 0; i < nums.size() - 1; i++){
+
+            farthest = max(farthest, i + nums[i]);
+
+            if(i == currentEnd){
+                jumps++;
+                currentEnd = farthest;
+            }
+        }
+
+        return jumps;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> nums = {2,3,1,1,4};
+
+    cout<<"Array: ";
+    for(int x : nums) cout<<x<<" ";
+    cout<<endl;
+
+    Solution sol;
+
+    cout<<"Recursion: "<<sol.recursion(nums,0)<<endl;
+
+    vector<int> dp(nums.size(), -1);
+    cout<<"Memoization: "<<sol.memo(nums,0,dp)<<endl;
+
+    cout<<"Greedy (Optimal): "<<sol.greedy(nums)<<endl;
+
+    return 0;
+}
