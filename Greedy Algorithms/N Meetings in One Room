@@ -1,0 +1,147 @@
+// Problem: N Meetings in One Room
+// Platform: GFG
+// Pattern: Greedy (Interval Scheduling)
+//
+// Problem Statement:
+// Given start[] and end[] of meetings, find the maximum number
+// of meetings that can be performed in a room (no overlap).
+//
+// Approaches:
+// 1. Recursion (Brute Force)
+// 2. Memoization (DP)
+// 3. Greedy (Optimal)
+//
+// Time Complexities:
+// Recursion: O(2^n)
+// Memoization: O(n^2)
+// Greedy: O(n log n)
+//
+// Space Complexity:
+// Recursion: O(n)
+// Memoization: O(n^2)
+// Greedy: O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+/////////////////////////////////////////////////////////
+// 1️⃣ Recursion (Brute Force)
+/////////////////////////////////////////////////////////
+
+    int recursion(int idx, int lastEnd,
+                  vector<pair<int,int>>& meet){
+
+        if(idx == meet.size()) return 0;
+
+        // skip
+        int nottake = recursion(idx+1, lastEnd, meet);
+
+        // take
+        int take = 0;
+        if(meet[idx].first > lastEnd){
+            take = 1 + recursion(idx+1,
+                                meet[idx].second,
+                                meet);
+        }
+
+        return max(take, nottake);
+    }
+
+/////////////////////////////////////////////////////////
+// 2️⃣ Memoization (DP)
+/////////////////////////////////////////////////////////
+
+    int memo(int idx, int lastEnd,
+             vector<pair<int,int>>& meet,
+             map<pair<int,int>,int>& dp){
+
+        if(idx == meet.size()) return 0;
+
+        if(dp.count({idx,lastEnd}))
+            return dp[{idx,lastEnd}];
+
+        int nottake = memo(idx+1,lastEnd,meet,dp);
+
+        int take = 0;
+        if(meet[idx].first > lastEnd){
+            take = 1 + memo(idx+1,
+                            meet[idx].second,
+                            meet,dp);
+        }
+
+        return dp[{idx,lastEnd}] = max(take,nottake);
+    }
+
+/////////////////////////////////////////////////////////
+// 3️⃣ Greedy (Optimal)
+/////////////////////////////////////////////////////////
+
+    int greedy(vector<int>& start, vector<int>& end){
+
+        int n = start.size();
+
+        vector<tuple<int,int,int>> meet;
+
+        for(int i=0;i<n;i++){
+            meet.push_back({end[i], start[i], i+1});
+        }
+
+        sort(meet.begin(), meet.end());
+
+        int count = 0;
+        int lastEnd = -1;
+
+        for(auto &m : meet){
+
+            int e = get<0>(m);
+            int s = get<1>(m);
+
+            if(s > lastEnd){
+                count++;
+                lastEnd = e;
+            }
+        }
+
+        return count;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    vector<int> start = {1,3,0,5,8,5};
+    vector<int> end   = {2,4,6,7,9,9};
+
+    int n = start.size();
+
+    // Prepare (start,end) pairs for recursion/DP
+    vector<pair<int,int>> meet;
+
+    for(int i=0;i<n;i++)
+        meet.push_back({start[i],end[i]});
+
+    sort(meet.begin(),meet.end(),
+        [](auto &a, auto &b){
+            return a.second < b.second;
+        });
+
+    Solution sol;
+
+    cout<<"Recursion: "
+        <<sol.recursion(0,-1,meet)<<endl;
+
+    map<pair<int,int>,int> dp;
+    cout<<"Memoization: "
+        <<sol.memo(0,-1,meet,dp)<<endl;
+
+    cout<<"Greedy (Optimal): "
+        <<sol.greedy(start,end)<<endl;
+
+    return 0;
+}
