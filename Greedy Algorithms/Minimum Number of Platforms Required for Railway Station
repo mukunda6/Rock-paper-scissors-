@@ -1,0 +1,118 @@
+// Problem: Minimum Number of Platforms Required for Railway Station
+// Platform: GFG
+// Pattern: Greedy + Two Pointers
+//
+// Problem Statement:
+// Given arrival and departure times of trains,
+// find the minimum number of platforms required so that no train waits.
+//
+// ------------------------------------------------------------
+// 🔑 Key Idea:
+// At any moment → count how many trains are at the station simultaneously.
+// Maximum overlap = required platforms
+//
+// ------------------------------------------------------------
+// Approaches:
+// 1. Brute Force (Check all overlaps)
+// 2. Greedy (Sorting + Two Pointers)
+//
+// ------------------------------------------------------------
+// ⏱️ Time Complexity:
+// Brute Force: O(n^2)
+// Greedy: O(n log n)
+//
+// 💾 Space Complexity:
+// O(1)
+//
+// ------------------------------------------------------------
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+
+/////////////////////////////////////////////////////////
+// 1️⃣ Brute Force (O(n^2))
+/////////////////////////////////////////////////////////
+
+    int bruteForce(int n, int arr[], int dep[]) {
+
+        int ans = 1;
+
+        for(int i = 0; i < n; i++){
+
+            int count = 1;
+
+            for(int j = i + 1; j < n; j++){
+
+                // Check overlap
+                if((arr[i] >= arr[j] && arr[i] <= dep[j]) ||
+                   (arr[j] >= arr[i] && arr[j] <= dep[i])){
+                    count++;
+                }
+            }
+
+            ans = max(ans, count);
+        }
+
+        return ans;
+    }
+
+/////////////////////////////////////////////////////////
+// 2️⃣ Greedy (Optimal) - Two Pointers
+/////////////////////////////////////////////////////////
+
+    int greedy(int n, int arr[], int dep[]) {
+
+        // Step 1: Sort arrival and departure
+        sort(arr, arr + n);
+        sort(dep, dep + n);
+
+        int platforms = 1;
+        int result = 1;
+
+        int i = 1, j = 0;
+
+        // Step 2: Traverse both arrays
+        while(i < n && j < n){
+
+            // Train arrives before previous departs → need platform
+            if(arr[i] <= dep[j]){
+                platforms++;
+                i++;
+            }
+            else{
+                // Train departs → free platform
+                platforms--;
+                j++;
+            }
+
+            result = max(result, platforms);
+        }
+
+        return result;
+    }
+};
+
+/////////////////////////////////////////////////////////
+// Driver Code
+/////////////////////////////////////////////////////////
+
+int main(){
+
+    int arr[] = {900, 945, 955, 1100, 1500, 1800};
+    int dep[] = {920, 1200, 1130, 1150, 1900, 2000};
+
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    Solution sol;
+
+    cout<<"Brute Force: "
+        <<sol.bruteForce(n, arr, dep)<<endl;
+
+    cout<<"Greedy (Optimal): "
+        <<sol.greedy(n, arr, dep)<<endl;
+
+    return 0;
+}
